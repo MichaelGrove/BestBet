@@ -1,25 +1,36 @@
 <template>
-	<section>
+	<section class="p-2 overflow-y-auto">
+
+		<h1 class="text-2xl uppercase text-white font-display">
+			Place Bet
+		</h1>
 
 		<!-- Breadcrumbs -->
-		<div>
-			<router-link to="/">
+		<div class="flex text-sm">
+			<router-link 
+				to="/"
+				class="text-orange-500"
+			>
 				Dashboard
 			</router-link>
-			<p>/</p>
-			<p>
+			<p class="text-white mx-2">/</p>
+			<p class="text-white">
 				Place bet
 			</p>
 		</div>
 
-		<form>
-			<div>
-				<label id="sport">
+		<form class="w-full">
+			<div class="my-2">
+				<label
+					id="sport"
+					class="block mb-1 text-white"
+				>
 					Sport
 				</label>
 				<select
 					id="sport"
 					v-model="sport_id"
+					class="block w-full bg-gray-800 p-2 text-white"
 				>
 					<option
 						v-for="sport in sports"
@@ -31,13 +42,17 @@
 				</select>
 			</div>
 
-			<div>
-				<label for="bookmaker">
+			<div class="my-2">
+				<label
+					for="bookmaker"
+					class="block mb-1 text-white"
+				>
 					Bookmaker
 				</label>
 				<select
 					id="bookmaker"
 					v-model="bookmaker_id"
+					class="block w-full bg-gray-800 p-2 text-white"
 				>
 					<option
 						v-for="bookmaker in bookmakers"
@@ -49,44 +64,62 @@
 				</select>
 			</div>
 
-			<div>
-				<label>
+			<div class="my-2">
+				<label
+					for="game_description"
+					class="block mb-1 text-white"
+				>
 					Game / Description
 				</label>
 				<input
+					id="game_description"
 					type="text"
 					v-model="game_description"
+					class="block w-full bg-gray-800 p-2 text-white"
 				>
 			</div>
 
-			<div>
-				<label>
+			<div class="my-2">
+				<label
+					for="coefficient"
+					class="block mb-1 text-white"
+				>
 					Coefficient
 				</label>
 				<input
+					id="coefficient"
 					type="number"
 					step="0.1"
 					v-model="coefficient"
+					class="block w-full bg-gray-800 p-2 text-white"
 				/>
 			</div>
 
-			<div>
-				<label>
+			<div class="my-2">
+				<label
+					for="coefficient"
+					class="block mb-1 text-white"
+				>
 					Units
 				</label>
 				<input
+					id="coefficient"
 					type="number"
 					step="0.1"
 					v-model="units"
+					class="block w-full bg-gray-800 p-2 text-white"
 				/>
 			</div>
 
-			<button
-				type="submit"
-				@click="(ev) => submit(ev)"
-			>
-				Place Bet
-			</button>
+			<div class="flex flex-col">
+				<button
+					type="submit"
+					class="bg-gray-800 block text-center py-6 mt-4 text-orange-500 uppercase"
+					@click="(ev) => submit(ev)"
+				>
+					Place Bet
+				</button>
+			</div>
 		</form>
 
 	</section>

@@ -11,6 +11,10 @@ export default {
 		return state.bets.filter((bet) => bet.state === BET_STATES.PENDING);
 	},
 
+	resolvedBets(state) {
+		return state.bets.filter((bet) => bet.state !== BET_STATES.PENDING);
+	},
+
 	bookmakers(state) {
 		return state.bookmakers;
 	},

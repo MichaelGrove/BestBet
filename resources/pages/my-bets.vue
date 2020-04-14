@@ -1,63 +1,124 @@
 <template>
-	<section>
+	<section class="p-2 overflow-y-auto">
+
+		<h1 class="text-3xl uppercase text-white font-display">
+			My Bets
+		</h1>
+
 		<!-- Breadcrumbs -->
-		<div>
-			<router-link to="/">
+		<div class="flex text-sm mb-4">
+			<router-link
+				to="/"
+				class="text-orange-500"
+			>
 				Dashboard
 			</router-link>
-			<p>/</p>
-			<p>
+			<p class="text-white mx-2">/</p>
+			<p class="text-white">
 				My bets
 			</p>
 		</div>
+
+		<h2 class="text-xl uppercase text-white font-display">
+			Pending
+		</h2>
 
 		<ul>
 			<li
 				v-for="bet in pendingBets"
 				:key="bet.id"
+				class="my-2"
 			>
 				<div
-					class="bg-gray-200"
+					class="bg-gray-800 text-white p-2"
 				>
-					<div class="flex">
-						<p>
+					<div class="flex text-sm pb-2">
+						<p class="mr-auto w-1/2 font-bold">
 							{{bet.game_description}}
 						</p>
-						<p>
-							{{bet.bookmaker}}
-						</p>
-						<p>
-							{{bet.coefficient}}
+						<p class="w-1/2 flex">
+							<span class="mr-auto">
+								{{bet.bookmaker}}
+							</span>
+							<span class="text-right">
+								{{toFixed(bet.coefficient)}}
+							</span>							
 						</p>
 					</div>
 
-					<div class="flex">
+					<div class="flex bg-gray-900 p-2">
 
-						<div>
+						<div class="w-1/2">
 							<button
 								type="button"
-								class=""
-								@click="winGame"
+								class="p-2 mx-2 text-green-500"
+								@click="(ev) => winBet(ev, bet)"
 							>
 								WIN
 							</button>
 							<button
 								type="button"
-								class=""
-								@click="loseGame"
+								class="p-2 mx-2 text-red-500"
+								@click="(ev) => loseBet(ev, bet)"
 							>
 								LOSE
 							</button>
 						</div>
 
-						<p>
-							{{bet.units}}
+						<p class="w-1/2 text-sm">
+							Units: {{toFixed(bet.units)}}
 						</p>
 
 					</div>
 				</div>
 			</li>
 		</ul>
+
+		<h2 class="text-xl uppercase text-white font-display">
+			Results
+		</h2>
+
+		<div>
+			<table class="text-white text-sm">
+				<thead>
+					<tr>
+						<th class="p-2">
+							Sport
+						</th>
+						<th class="p-2">
+							Team/Player
+						</th>
+						<th class="p-2">
+							Type of Bet (TODO)
+						</th>
+						<th class="p-2">
+							Event
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr
+						v-for="(bet, i) in resolvedBets"
+						:key="bet.id"
+						:class="i % 2 ? 'bg-gray-900' : 'bg-gray-800'"
+					>
+						<td class="p-2">
+							{{bet.sport}}
+						</td>
+						<td class="p-2">
+							TODO
+						</td>
+						<td class="p-2">
+							TODO
+						</td>
+						<td class="p-2">
+							{{bet.game_description}}
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
 	</section>
 </template>
 
@@ -70,18 +131,29 @@ export default {
 		pendingBets: function() {
 			return this.$store.getters.pendingBets || [];
 		},
+		resolvedBets: function() {
+			return this.$store.getters.resolvedBets || [];
+		},
 	},
 	methods: {
 		fetchBets: function() {
 			this.$store.dispatch('fetchBets')
 				.catch(reject.bind(this));
 		},
-		winGame: function(ev) {
-
+		winBet: function(ev, bet) {
+			this.$store.dispatch('winBet', bet)
+				.catch(reject.bind(this));
 		},
-		loseGame: function(ev) {
-
+		loseBet: function(ev, bet) {
+			this.$store.dispatch('loseBet', bet)
+				.catch(reject.bind(this));
 		},
+		toFixed: function(value) {
+			if (typeof value === "string") {
+				return value;
+			}
+			return value.toFixed(2);
+		}
 	},
 	mounted() {
 		this.fetchBets();

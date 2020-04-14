@@ -64,4 +64,37 @@ export default {
 				return Promise.reject(new Error('Unexpected error'));
 			});
 	},
+
+	winBet(state, payload) {
+		return axios.post(`/api/bets/win/${payload.id}`)
+			.then((response) => {
+				if (response.data.success) {
+					state.commit('winBet', payload);
+					return true;
+				}
+
+				if (response.data.error) {
+					return Promise.reject(response.data.error);
+				}
+
+				return Promise.reject(new Error('Unexpected error'));
+			});
+	},
+
+	loseBet(state, payload) {
+		return axios.post(`/api/bets/lose/${payload.id}`)
+			.then((response) => {
+				if (response.data.success) {
+					state.commit('loseBet', payload);
+					return true;
+				}
+
+				if (response.data.error) {
+					return Promise.reject(response.data.error);
+				}
+
+				return Promise.reject(new Error('Unexpected error'));
+			});
+	},
+
 };

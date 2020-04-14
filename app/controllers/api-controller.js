@@ -6,8 +6,8 @@ class BetController {
 	async fetchBets(req, res) {
 		const results = await db
 			.from('bets')
-			.leftJoin('bookmakers', 'bookmakers.id', 'bets.sport_id')
-			.leftJoin('sports', 'sports.id', 'bets.bookmaker_id')
+			.leftJoin('bookmakers', 'bookmakers.id', 'bets.bookmaker_id')
+			.leftJoin('sports', 'sports.id', 'bets.sport_id')
 			.where({ user_id: req.uid })
 			.select('bets.*', 'bookmakers.name as bookmaker', 'sports.name as sport')
 			.catch((err) => {
@@ -61,6 +61,44 @@ class BetController {
 		}
 
 		return res.send({ success: 1, bet });
+	}
+
+	async winBet(req, res) {
+		const { uid } = req;
+		if (!uid) {
+			return res.status(500).send({ error: 'Unexpected error' });
+		}
+
+		const { id } = req.params;
+		const { WON } = constants.BET_STATES;
+		db('bets')
+			.update({ state: WON })
+			.where('id', '=', id)
+			.andWhere('user_id', '=', uid)
+			.catch((err) => {
+				console.log(err);
+			});
+
+		return res.send({ success: 1 });
+	}
+
+	async loseBet(req, res) {
+		const { uid } = req;
+		if (!uid) {
+			return res.status(500).send({ error: 'Unexpected error' });
+		}
+
+		const { id } = req.params;
+		const { LOST } = constants.BET_STATES;
+		db('bets')
+			.update({ state: LOST })
+			.where('id', '=', id)
+			.andWhere('user_id', '=', uid)
+			.catch((err) => {
+				console.log(err);
+			});
+
+		return res.send({ success: 1 });
 	}
 
 	async fetchBookmakers(req, res) {
