@@ -1,5 +1,7 @@
 # BestBet
 
+- Create a private and public key pair to project root.
+
 ## TODO:
 
 - Frontend (Vue SPA)
@@ -26,9 +28,6 @@
             - id 
             - name
         - [ ] bookmakers
-            - id
-            - name
-        - [ ] bet_states
             - id
             - name
         - [ ] bets
