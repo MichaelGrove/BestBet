@@ -66,6 +66,28 @@
 
 			<div class="my-2">
 				<label
+					for="type"
+					class="block mb-1 text-white"
+				>
+					Type of Bet
+				</label>
+				<select
+					id="type"
+					v-model="type"
+					class="block w-full bg-gray-800 p-2 text-white"
+				>
+					<option
+						v-for="betType in betTypes"
+						:key="betType.id"
+						v-bind:value="betType.id"
+					>
+						{{betType.name}}
+					</option>
+				</select>
+			</div>
+
+			<div class="my-2">
+				<label
 					for="game_description"
 					class="block mb-1 text-white"
 				>
@@ -75,6 +97,21 @@
 					id="game_description"
 					type="text"
 					v-model="game_description"
+					class="block w-full bg-gray-800 p-2 text-white"
+				>
+			</div>
+
+			<div class="my-2">
+				<label
+					for="team_player"
+					class="block mb-1 text-white"
+				>
+					Team / Player
+				</label>
+				<input
+					id="team_player"
+					type="text"
+					v-model="team_player"
 					class="block w-full bg-gray-800 p-2 text-white"
 				>
 			</div>
@@ -133,7 +170,9 @@ export default {
 	data: () => ({
 		sport_id: 0,
 		bookmaker_id: 0,
+		type: 0,
 		game_description: '',
+		team_player: '',
 		coefficient: 0,
 		units: 0,
 	}),
@@ -144,6 +183,9 @@ export default {
 		sports: function() {
 			return this.$store.getters.sports;
 		},
+		betTypes: function() {
+			return this.$store.getters.betTypes;
+		}
 	},
 	methods: {
 		fetchBookmakers: function() {
@@ -152,13 +194,18 @@ export default {
 		fetchSports: function() {
 			return this.$store.dispatch('fetchSports');
 		},
+		fetchBetTypes: function() {
+			return this.$store.dispatch('fetchBetTypes');
+		},
 		submit: function(ev) {
 			ev.preventDefault();
 
 			const {
 				sport_id,
 				bookmaker_id,
+				type,
 				game_description,
+				team_player,
 				coefficient,
 				units,
 			} = this;
@@ -166,7 +213,9 @@ export default {
 			return this.$store.dispatch('placeBet', {
 				sport_id,
 				bookmaker_id,
+				type,
 				game_description,
+				team_player,
 				coefficient,
 				units,
 			})
@@ -181,6 +230,7 @@ export default {
 	beforeMount() {
 		return this.fetchBookmakers()
 			.then(() => this.fetchSports())
+			.then(() => this.fetchBetTypes())
 			.catch(reject.bind(this));
 	},
 }

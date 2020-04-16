@@ -49,6 +49,22 @@ export default {
 			});
 	},
 
+	fetchBetTypes(state) {
+		return axios.post('/api/bet-types')
+			.then((response) => {
+				if (response.data.results) {
+					state.commit('initBetTypes', response.data.results);
+					return response.data.results;
+				}
+
+				if (response.data.error) {
+					return Promise.reject(response.data.error);
+				}
+
+				return Promise.reject(new Error('Unexpected error'));
+			});
+	},
+
 	placeBet(state, payload) {
 		return axios.post('/api/bets/create', payload)
 			.then((response) => {
@@ -70,6 +86,22 @@ export default {
 			.then((response) => {
 				if (response.data.success) {
 					state.commit('winBet', payload);
+					return true;
+				}
+
+				if (response.data.error) {
+					return Promise.reject(response.data.error);
+				}
+
+				return Promise.reject(new Error('Unexpected error'));
+			});
+	},
+
+	pushBet(state, payload) {
+		return axios.post(`/api/bets/push/${payload.id}`)
+			.then((response) => {
+				if (response.data.success) {
+					state.commit('pushBet', payload);
 					return true;
 				}
 

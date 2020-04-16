@@ -3,5 +3,6 @@ module.exports = {
 		PENDING: 'PENDING',
 		WON: 'WON',
 		LOST: 'LOST',
+		PUSHED: 'PUSHED',
 	},
 };

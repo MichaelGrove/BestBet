@@ -22,6 +22,15 @@ export default {
 		});
 	},
 
+	pushBet(state, payload) {
+		state.bets = state.bets.map((bet) => {
+			if (bet.id === payload.id) {
+				bet.state = BET_STATES.PUSHED;
+			}
+			return bet;
+		});
+	},
+
 	loseBet(state, payload) {
 		state.bets = state.bets.map((bet) => {
 			if (bet.id === payload.id) {
@@ -37,5 +46,9 @@ export default {
 
 	initSports(state, payload) {
 		state.sports = payload;
+	},
+
+	initBetTypes(state, payload) {
+		state.betTypes = payload;
 	},
 };

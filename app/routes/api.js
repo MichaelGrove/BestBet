@@ -18,9 +18,13 @@ const betValidations = [
 ];
 
 const router = express.Router();
-router.post('/api/bets', requireAuth, controller.fetchBets.bind(controller));
 router.post('/api/bets/create', [requireAuth, validate(betValidations)], controller.placeBet.bind(controller));
+router.post('/api/bets/win/:id', requireAuth, controller.winBet.bind(controller));
+router.post('/api/bets/push/:id', requireAuth, controller.pushBet.bind(controller));
+router.post('/api/bets/lose/:id', requireAuth, controller.loseBet.bind(controller));
+router.post('/api/bets', requireAuth, controller.fetchBets.bind(controller));
 router.post('/api/bookmakers', requireAuth, controller.fetchBookmakers.bind(controller));
 router.post('/api/sports', requireAuth, controller.fetchSports.bind(controller));
+router.post('/api/bet-types', requireAuth, controller.fetchBetTypes.bind(controller));
 
 module.exports = router;

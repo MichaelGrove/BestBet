@@ -34,7 +34,7 @@
 				>
 					<div class="flex text-sm pb-2">
 						<p class="mr-auto w-1/2 font-bold">
-							{{bet.game_description}}
+							{{bet.sport}}, {{bet.team_player}}
 						</p>
 						<p class="w-1/2 flex">
 							<span class="mr-auto">
@@ -46,6 +46,14 @@
 						</p>
 					</div>
 
+					<p>
+						{{bet.bet_type}}
+					</p>
+
+					<p>
+						{{bet.game_description}}
+					</p>
+
 					<div class="flex bg-gray-900 p-2">
 
 						<div class="w-1/2">
@@ -55,6 +63,13 @@
 								@click="(ev) => winBet(ev, bet)"
 							>
 								WIN
+							</button>
+							<button
+								type="button"
+								class="p-2 mx-2 text-yellow-500"
+								@click="(ev) => pushBet(ev, bet)"
+							>
+								PUSH
 							</button>
 							<button
 								type="button"
@@ -78,55 +93,60 @@
 			Results
 		</h2>
 
-		<div>
-			<table class="text-white text-sm">
-				<thead>
-					<tr>
-						<th class="p-2">
-							Sport
-						</th>
-						<th class="p-2">
-							Team/Player
-						</th>
-						<th class="p-2">
-							Type of Bet (TODO)
-						</th>
-						<th class="p-2">
-							Event
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr
-						v-for="(bet, i) in resolvedBets"
-						:key="bet.id"
-						:class="i % 2 ? 'bg-gray-900' : 'bg-gray-800'"
-					>
-						<td class="p-2">
-							{{bet.sport}}
-						</td>
-						<td class="p-2">
-							TODO
-						</td>
-						<td class="p-2">
-							TODO
-						</td>
-						<td class="p-2">
-							{{bet.game_description}}
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		<ul>
+			<li
+				v-for="bet in resolvedBets"
+				:key="bet.id"
+				class="my-2"
+			>
+				<div
+					class="bg-gray-800 text-white p-2"
+				>
+					<div class="flex text-sm pb-2">
+						<p class="mr-auto w-1/2 font-bold">
+							{{bet.sport}}, {{bet.team_player}}
+						</p>
+						<p class="w-1/2 flex">
+							<span class="mr-auto">
+								{{bet.bookmaker}}
+							</span>
+							<span class="text-right">
+								{{toFixed(bet.coefficient)}}
+							</span>							
+						</p>
+					</div>
+
+					<p>
+						{{bet.bet_type}}
+					</p>
+					<p>
+						{{bet.game_description}}
+					</p>
+
+					<div class="flex bg-gray-900 p-2">
+						<div class="w-1/2">
+							<BetStateTag :state='bet.state' />
+						</div>
+
+						<p class="w-1/2 text-sm">
+							Units: {{toFixed(bet.units)}}
+						</p>
+
+					</div>
+				</div>
+			</li>
+		</ul>
 
 	</section>
 </template>
 
 <script>
+import BetStateTag from '../components/BetStateTag.vue';
 import reject from '../plugins/reject';
 
 export default {
 	name: 'my-bets',
+	components: { BetStateTag },
 	computed: {
 		pendingBets: function() {
 			return this.$store.getters.pendingBets || [];
@@ -142,6 +162,10 @@ export default {
 		},
 		winBet: function(ev, bet) {
 			this.$store.dispatch('winBet', bet)
+				.catch(reject.bind(this));
+		},
+		pushBet: function(ev, bet) {
+			this.$store.dispatch('pushBet', bet)
 				.catch(reject.bind(this));
 		},
 		loseBet: function(ev, bet) {

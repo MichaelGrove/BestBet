@@ -22,4 +22,8 @@ export default {
 	sports(state) {
 		return state.sports;
 	},
+
+	betTypes(state) {
+		return state.betTypes;
+	},
 };

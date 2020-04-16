@@ -8,8 +8,14 @@ class BetController {
 			.from('bets')
 			.leftJoin('bookmakers', 'bookmakers.id', 'bets.bookmaker_id')
 			.leftJoin('sports', 'sports.id', 'bets.sport_id')
+			.leftJoin('bet_types', 'bet_types.id', 'bets.type')
 			.where({ user_id: req.uid })
-			.select('bets.*', 'bookmakers.name as bookmaker', 'sports.name as sport')
+			.select(
+				'bets.*',
+				'bookmakers.name as bookmaker',
+				'sports.name as sport',
+				'bet_types.name as bet_type',
+			)
 			.catch((err) => {
 				console.log(err);
 				return [];
@@ -28,7 +34,9 @@ class BetController {
 		const {
 			sport_id,
 			bookmaker_id,
+			type,
 			game_description,
+			team_player,
 			coefficient,
 			units,
 		} = req.body;
@@ -37,7 +45,9 @@ class BetController {
 			user_id: uid,
 			sport_id,
 			bookmaker_id,
+			type,
 			game_description,
+			team_player,
 			coefficient,
 			units,
 			state: PENDING,
@@ -71,14 +81,19 @@ class BetController {
 
 		const { id } = req.params;
 		const { WON } = constants.BET_STATES;
-		db('bets')
-			.update({ state: WON })
-			.where('id', '=', id)
-			.andWhere('user_id', '=', uid)
-			.catch((err) => {
-				console.log(err);
-			});
+		await this.updateBetState(id, uid, WON);
+		return res.send({ success: 1 });
+	}
 
+	async pushBet(req, res) {
+		const { uid } = req;
+		if (!uid) {
+			return res.status(500).send({ error: 'Unexpected error' });
+		}
+
+		const { id } = req.params;
+		const { PUSHED } = constants.BET_STATES;
+		await this.updateBetState(id, uid, PUSHED);
 		return res.send({ success: 1 });
 	}
 
@@ -90,15 +105,18 @@ class BetController {
 
 		const { id } = req.params;
 		const { LOST } = constants.BET_STATES;
-		db('bets')
-			.update({ state: LOST })
+		await this.updateBetState(id, uid, LOST);
+		return res.send({ success: 1 });
+	}
+
+	async updateBetState(id, uid, state) {
+		return db('bets')
+			.update({ state })
 			.where('id', '=', id)
 			.andWhere('user_id', '=', uid)
 			.catch((err) => {
 				console.log(err);
 			});
-
-		return res.send({ success: 1 });
 	}
 
 	async fetchBookmakers(req, res) {
@@ -116,6 +134,18 @@ class BetController {
 	async fetchSports(req, res) {
 		const results = await db
 			.from('sports')
+			.select('*')
+			.catch((err) => {
+				console.log(err);
+				return [];
+			});
+
+		return res.send({ results });
+	}
+
+	async fetchBetTypes(req, res) {
+		const results = await db
+			.from('bet_types')
 			.select('*')
 			.catch((err) => {
 				console.log(err);
