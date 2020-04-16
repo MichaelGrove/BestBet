@@ -2,10 +2,10 @@
 	<span 
 		:class="[
 			'rounded-lg',
-			'p-1',
+			'p-2',
 			'text-center',
 			'inline-block',
-			'text-white',
+			'bg-gray-900',
 			color
 		].join(' ')"
 	>
@@ -27,13 +27,13 @@ export default {
 		color() {
 			switch (this.state) {
 			case BET_STATES.WON:
-				return 'bg-green-600';
+				return 'text-green-500';
 			case BET_STATES.PUSHED:
-				return 'bg-yellow-600';
+				return 'text-yellow-500';
 			case BET_STATES.LOST:
-				return 'bg-red-600';
+				return 'text-red-500';
 			}
-			return 'bg-blue-600';
+			return 'text-blue-500';
 		},
 		text() {
 			switch (this.state) {
