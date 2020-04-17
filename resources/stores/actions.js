@@ -1,8 +1,8 @@
-import axios from '../plugins/axios';
+import request from '../plugins/api-request';
 
 export default {
 	fetchBets(state) {
-		return axios.post('/api/bets')
+		return request('/api/bets')
 			.then((response) => {
 				if (response.data.results) {
 					state.commit('initBets', response.data.results);
@@ -18,7 +18,7 @@ export default {
 	},
 
 	fetchBookmakers(state) {
-		return axios.post('/api/bookmakers')
+		return request('/api/bookmakers')
 			.then((response) => {
 				if (response.data.results) {
 					state.commit('initBookmakers', response.data.results);
@@ -34,7 +34,7 @@ export default {
 	},
 
 	fetchSports(state) {
-		return axios.post('/api/sports')
+		return request('/api/sports')
 			.then((response) => {
 				if (response.data.results) {
 					state.commit('initSports', response.data.results);
@@ -50,7 +50,7 @@ export default {
 	},
 
 	fetchBetTypes(state) {
-		return axios.post('/api/bet-types')
+		return request('/api/bet-types')
 			.then((response) => {
 				if (response.data.results) {
 					state.commit('initBetTypes', response.data.results);
@@ -66,7 +66,7 @@ export default {
 	},
 
 	placeBet(state, payload) {
-		return axios.post('/api/bets/create', payload)
+		return request('/api/bets/create', payload)
 			.then((response) => {
 				if (response.data.success) {
 					state.commit('addBet', response.data.bet);
@@ -82,7 +82,7 @@ export default {
 	},
 
 	winBet(state, payload) {
-		return axios.post(`/api/bets/win/${payload.id}`)
+		return request(`/api/bets/win/${payload.id}`)
 			.then((response) => {
 				if (response.data.success) {
 					state.commit('winBet', payload);
@@ -98,7 +98,7 @@ export default {
 	},
 
 	pushBet(state, payload) {
-		return axios.post(`/api/bets/push/${payload.id}`)
+		return request(`/api/bets/push/${payload.id}`)
 			.then((response) => {
 				if (response.data.success) {
 					state.commit('pushBet', payload);
@@ -114,7 +114,7 @@ export default {
 	},
 
 	loseBet(state, payload) {
-		return axios.post(`/api/bets/lose/${payload.id}`)
+		return request(`/api/bets/lose/${payload.id}`)
 			.then((response) => {
 				if (response.data.success) {
 					state.commit('loseBet', payload);

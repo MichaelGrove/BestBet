@@ -11,8 +11,8 @@
             - Place bet -> /place-bet
             - My bets -> /my-bets
         - [x] Place bet /place-bet
-        - [ ] My bets (Pending/Results) /my-bets
-        - [ ] axios handle session expiration
+        - [x] My bets (Pending/Results) /my-bets
+        - [x] axios handle session expiration
 
 - Backend
     - [x] Routing

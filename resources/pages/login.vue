@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import axios from '../plugins/axios';
+import request from '../plugins/api-request';
 
 export default {
 	name: 'login',
@@ -56,9 +56,9 @@ export default {
 		password: '',
 	}),
 	methods: {
-		login: function() {
+		login() {
 			const { email, password } = this;
-			return axios.post('auth/login', { email, password })
+			return request('auth/login', { email, password })
 				.then((response) => {
 					if (response.data.token) {
 						localStorage.setItem('_token', response.data.token);
