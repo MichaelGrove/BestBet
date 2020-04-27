@@ -20,7 +20,6 @@ class AuthController {
 			.where({ email })
 			.select('*')
 			.catch((err) => {
-				// eslint-disable-next-line no-console
 				console.log(err);
 				return [];
 			});
@@ -37,7 +36,30 @@ class AuthController {
 		}
 
 		const token = generateToken({ uid: user.id, email: user.email });
-		return res.send({ token });
+		return res.send({ token, units: user.units });
+	}
+
+	async wallet(req, res) {
+		const { uid } = req;
+		if (!uid) {
+			return res.status(500).send({ error: 'Unexpected error' });
+		}
+
+		const users = await db
+			.from('users')
+			.where({ id: uid })
+			.select('units')
+			.catch((err) => {
+				console.log(err);
+				return [];
+			});
+
+		if (users.length === 0) {
+			return res.json({ error: 'Wrong sign in credentials' });
+		}
+
+		const [user] = users;
+		return res.send({ units: user.units });
 	}
 }
 

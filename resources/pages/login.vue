@@ -61,6 +61,7 @@ export default {
 			return request('auth/login', { email, password })
 				.then((response) => {
 					if (response.data.token) {
+						this.$store.commit('setUnits', response.data.units);
 						localStorage.setItem('_token', response.data.token);
 						this.$router.push('/');
 						return true;

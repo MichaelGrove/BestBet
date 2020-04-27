@@ -21,7 +21,7 @@
 
 - Database
     - Tables:
-        - [ ] user
+        - [x] user
             - id
             - email
             - password
@@ -63,7 +63,7 @@
 
 *Make sure to have knex installed globally.*
 
-- Create migration: ``` knex make:migration [options] <name> ```
+- Create migration: ``` knex migrate:make [options] <name> ```
 - Migrate: ``` knex migrate:latest ```
 - Rollback: ``` knex migrate:rollback ```
 - Seed: ``` knex seed:run ```

@@ -20,7 +20,7 @@
 		</div>
 
 		<p class="text-white text-sm text-right block italic">
-			My wallet: 20.00 units
+			My wallet: {{units}} units
 		</p>
 
 		<h2 class="text-xl uppercase text-white font-display">
@@ -58,15 +58,18 @@ export default {
 	name: 'my-bets',
 	components: { BetListItem },
 	computed: {
-		pendingBets: function() {
+		units() {
+			return this.$store.getters.units || 0;
+		},
+		pendingBets() {
 			return this.$store.getters.pendingBets || [];
 		},
-		resolvedBets: function() {
+		resolvedBets() {
 			return this.$store.getters.resolvedBets || [];
 		},
 	},
 	methods: {
-		fetchBets: function() {
+		fetchBets() {
 			this.$store.dispatch('fetchBets')
 				.catch(reject.bind(this));
 		},

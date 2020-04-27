@@ -9,6 +9,7 @@ exports.seed = async (knex) => {
 		email: process.env.ADMIN_EMAIL,
 		password: hash,
 		is_admin: true,
+		units: 0,
 	};
 
 	// Deletes ALL existing entries

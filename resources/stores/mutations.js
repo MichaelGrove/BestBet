@@ -3,6 +3,9 @@ import constants from './constants';
 const { BET_STATES } = constants;
 
 export default {
+	setUnits(state, payload) {
+		state.units = payload;
+	},
 
 	// Bets
 	initBets(state, payload) {

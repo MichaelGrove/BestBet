@@ -62,7 +62,7 @@
 <script>
 import BetStateTag from './BetStateTag.vue';
 import constants from '../stores/constants';
-
+import reject from '../plugins/reject';
 
 export default {
 	name: 'bet-list-item',

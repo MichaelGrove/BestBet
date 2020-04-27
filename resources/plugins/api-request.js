@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export default (url, params = {}) => {
 	const instance = {
-		baseURL: '/',
+		baseURL: '/api/',
 		responseType: 'json',
 		headers: {},
 	};

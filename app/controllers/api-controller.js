@@ -24,6 +24,11 @@ class BetController {
 		return res.send({ results });
 	}
 
+	/**
+	 * Creates a bet and removes the number of units from your wallet.
+	 * @param {*} req
+	 * @param {*} res
+	 */
 	async placeBet(req, res) {
 		const { uid } = req;
 		if (!uid) {
@@ -70,9 +75,21 @@ class BetController {
 			bet.id = id;
 		}
 
-		return res.send({ success: 1, bet });
+		await this.updateWallet(uid, -units)
+			.catch((err) => {
+				console.log(err);
+				return res.status(500).send({ error: 'Unexpected error' });
+			});
+
+		const walletBalance = await this.getWalletBalance(uid);
+		return res.send({ success: 1, bet, units: walletBalance });
 	}
 
+	/**
+	 * Sets bet state to won and returns units to wallet with profits.
+	 * @param {*} req
+	 * @param {*} res
+	 */
 	async winBet(req, res) {
 		const { uid } = req;
 		if (!uid) {
@@ -81,10 +98,24 @@ class BetController {
 
 		const { id } = req.params;
 		const { WON } = constants.BET_STATES;
+		const bet = await this.findBetById(id, uid);
+		if (!bet) {
+			return res.status(500).send({ error: 'Bet not found' });
+		}
+
+		const { units, coefficient } = bet;
+		const winnings = units * coefficient;
 		await this.updateBetState(id, uid, WON);
-		return res.send({ success: 1 });
+		await this.updateWallet(uid, winnings);
+		const walletBalance = await this.getWalletBalance(uid);
+		return res.send({ success: 1, units: walletBalance });
 	}
 
+	/**
+	 * Sets bet state to pushed and returns units to wallet.
+	 * @param {*} req
+	 * @param {*} res
+	 */
 	async pushBet(req, res) {
 		const { uid } = req;
 		if (!uid) {
@@ -93,10 +124,22 @@ class BetController {
 
 		const { id } = req.params;
 		const { PUSHED } = constants.BET_STATES;
+		const bet = await this.findBetById(id, uid);
+		if (!bet) {
+			return res.status(500).send({ error: 'Bet not found' });
+		}
+
 		await this.updateBetState(id, uid, PUSHED);
-		return res.send({ success: 1 });
+		await this.updateWallet(uid, bet.units);
+		const walletBalance = await this.getWalletBalance(uid);
+		return res.send({ success: 1, units: walletBalance });
 	}
 
+	/**
+	 * Sets bet state to lost.
+	 * @param {*} req
+	 * @param {*} res
+	 */
 	async loseBet(req, res) {
 		const { uid } = req;
 		if (!uid) {
@@ -105,8 +148,14 @@ class BetController {
 
 		const { id } = req.params;
 		const { LOST } = constants.BET_STATES;
+		const bet = await this.findBetById(id, uid);
+		if (!bet) {
+			return res.status(500).send({ error: 'Bet not found' });
+		}
+
 		await this.updateBetState(id, uid, LOST);
-		return res.send({ success: 1 });
+		const walletBalance = await this.getWalletBalance(uid);
+		return res.send({ success: 1, units: walletBalance });
 	}
 
 	async updateBetState(id, uid, state) {
@@ -114,6 +163,47 @@ class BetController {
 			.update({ state })
 			.where('id', '=', id)
 			.andWhere('user_id', '=', uid)
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
+	/**
+	 * Returns the amount of units on user
+	 * @param {number} uid User ID
+	 * @returns {number}
+	 */
+	async getWalletBalance(uid) {
+		const user = await this.getUserById(uid);
+		if (!user) {
+			throw new Error('User not found');
+		}
+		return user.units;
+	}
+
+	/**
+	 * @param {*} uid User ID
+	 * @returns {object|null} User
+	 */
+	async getUserById(uid) {
+		const user = await db('users')
+			.where('id', '=', uid)
+			.catch((err) => {
+				console.log(err);
+			});
+		return user && user.length > 0 ? user[0] : null;
+	}
+
+	/**
+	 * @param {*} uid
+	 * @param {*} units
+	 */
+	async updateWallet(uid, units) {
+		let balance = await this.getWalletBalance(uid);
+		balance += units;
+		return db('users')
+			.update({ units: balance })
+			.where('id', '=', uid)
 			.catch((err) => {
 				console.log(err);
 			});
@@ -153,6 +243,18 @@ class BetController {
 			});
 
 		return res.send({ results });
+	}
+
+	async findBetById(id, uid) {
+		const bets = await db
+			.from('bets')
+			.where('id', '=', id)
+			.andWhere('user_id', '=', uid)
+			.catch((err) => {
+				console.log(err);
+				return [];
+			});
+		return bets && bets.length > 0 ? bets[0] : null;
 	}
 
 	async findBookmakerById(id) {

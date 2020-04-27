@@ -3,6 +3,10 @@ import constants from './constants';
 const { BET_STATES } = constants;
 
 export default {
+	units(state) {
+		return state.units;
+	},
+
 	bets(state) {
 		return state.bets;
 	},

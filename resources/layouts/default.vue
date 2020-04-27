@@ -7,7 +7,13 @@
 </template>
 
 <script>
+import reject from '../plugins/reject';
+
 export default {
 	name: 'default',
+	beforeMount() {
+		this.$store.dispatch('fetchWallet')
+			.catch(reject.bind(this));
+	},
 };
 </script>
